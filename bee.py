@@ -1,20 +1,20 @@
 import random
 from binary_utils import *
-from bee_genetic import max_search_radius, deviation_angle_bits, search_radius_bits
+from genetic_consts import *
 
 
 class Bee:
-
-
-    def __init__(self, fav_dir, fav_color, deviation_angle, search_radius, search_strategy, honeycomb_start):
-        self.fav_dir = fav_dir
-        self.fav_color = fav_color
-        self.deviation_angle = deviation_angle
-        self.search_radius = search_radius
-        self.search_strategy = search_strategy
-        self.honeycomb_start = honeycomb_start
+    def __init__(self, genes):
+        self.fav_dir = 0
+        self.fav_color = 0
+        self.deviation_angle = 0
+        self.search_radius = 0
+        self.search_strategy = 0
+        self.honeycomb_start = False
+        self.parse_genes(genes)
         self.pollinated_flowers = []
         self.traveled_distance = 0
+        self.is_mutant = False
         self.fitness = -1
 
 
@@ -24,23 +24,43 @@ class Bee:
 
 
     def crossover(self, bee):
-        fav_dir = crossover_ints(self.fav_dir, bee.fav_dir, 3)
-        fav_color = crossover_bin_lists(self.fav_color, bee.fav_color)
-        deviation_angle = crossover_ints(self.deviation_angle, bee.deviation_angle, deviation_angle_bits)
+        self_genes = self.genes()
+        other_genes = bee.genes()
 
-        search_radius = max_search_radius + 1
-        while search_radius > max_search_radius:
-            search_radius = crossover_ints(self.search_radius, bee.search_radius, search_radius_bits)
+        cut_index = random.randint(0, len(self_genes))
+        first_child_genes = self_genes[:cut_index] + other_genes[cut_index:]
+        second_child_genes = other_genes[:cut_index] + self_genes[cut_index:]
 
-        search_strategy = crossover_ints(self.search_strategy, bee.search_strategy, 2)
-        search_strategy = search_strategy if search_strategy <= 2 else random.randint(0, 2) # avoid illegal 3
+        first_child = Bee(first_child_genes)
+        second_child = Bee(second_child_genes)
 
-        honeycomb_start = random.choice([self.honeycomb_start, bee.honeycomb_start])
-        return Bee(fav_dir, fav_color, deviation_angle, search_radius, search_strategy, honeycomb_start)
+        first_child.adjust_gene_values()
+        second_child.adjust_gene_values()
+        return first_child, second_child
+
+
+    def parse_genes(self, genes):
+        self.fav_dir = bin_list_to_int(genes[:3])
+        self.fav_color = genes[3:6]
+        self.deviation_angle = bin_list_to_int(genes[6:(6+deviation_angle_bits)])
+        self.search_radius= bin_list_to_int(genes[(6+deviation_angle_bits):(6+deviation_angle_bits+search_radius_bits)])
+        self.search_strategy = bin_list_to_int(genes[-3:-1])
+        self.honeycomb_start = bool(genes[-1])
+
+
+    def adjust_gene_values(self):
+        if (self.search_radius > max_search_radius):
+            self.search_radius = self.search_radius - random.randint(2**search_radius_bits - max_search_radius, max_search_radius)
+        if (self.search_strategy >= 2):
+            self.search_strategy = random.randint(0, 2) # avoid illegal 3
+
+
+    def genes(self):
+        return bin_list(self.fav_dir, 3) + self.fav_color + bin_list(self.deviation_angle, deviation_angle_bits) + bin_list(self.search_radius, search_radius_bits) + bin_list(self.search_strategy, 2) + [self.honeycomb_start]
 
 
     def __str__(self):
-        return '<🐝{}fit {} {}rgb {}° {}radius ({},{})🔍 {}⚐>'.format(self.fitness, str_dirs[self.fav_dir], ''.join(str(val) for val in self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, self.traveled_distance)
+        return '<🐝 {}fit {} {}rgb {}° {}radius ({},{})🔍 {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], ''.join(str(val) for val in self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, self.traveled_distance, self.is_mutant)
 
 
     def __repr__(self):

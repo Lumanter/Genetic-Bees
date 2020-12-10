@@ -2,26 +2,15 @@ import random
 from bee import Bee
 from binary_utils import *
 from flower_genetic import generate_initial_flowers
-
-
-bee_population = 50
-bee_mutation_chance = 0.2
-max_deviation_angle = 31
-deviation_angle_bits = len(list(bin(max_deviation_angle)[2:]))
-max_search_radius = 90
-search_radius_bits = len(list(bin(max_search_radius)[2:]))
-fitness_flowers_factor = 50
-top_bees_percent = 0.2
+from genetic_consts import *
 
 
 def get_random_bee():
-    fav_dir = random.randint(0, 7)
-    fav_color = [random.randint(0, 1) for _ in range(3)]
-    deviation_angle = random.randint(0, max_deviation_angle)
-    search_radius = random.randint(0, max_search_radius)
-    search_strategy = random.randint(0, 2)
-    honeycomb_start = bool(random.randint(0, 1))
-    return Bee(fav_dir, fav_color, deviation_angle, search_radius, search_strategy, honeycomb_start)
+    bee_genes_len = 9 + deviation_angle_bits + search_radius_bits
+    random_genes = [random.randint(0, 1) for _ in range(bee_genes_len)]
+    random_bee = Bee(random_genes)
+    random_bee.adjust_gene_values()
+    return random_bee
 
 
 def generate_initial_bees():
@@ -48,22 +37,21 @@ def crossover_bees(bees):
         first_parent = bees[i]
         if (i + 1 == len(bees)): # odd parent
             second_parent = bees[random.randin(0, len(bees))]
-            offspring.append(first_parent.crossover(second_parent))
         else:
             second_parent = bees[i + 1]
-            offspring.append(first_parent.crossover(second_parent))
-            offspring.append(second_parent.crossover(second_parent))
+        first_child, second_child = first_parent.crossover(second_parent)
+        offspring.extend([first_child, second_child])
     return offspring
 
 
 def mutate_bees(bees):
     for bee in bees:
-        bee.fav_dir = mutate_int(bee.fav_dir, 3, bee_mutation_chance)
-        mutate_bin_list(bee.fav_color, bee_mutation_chance)
-        bee.deviation_angle = mutate_int(bee.deviation_angle, deviation_angle_bits, bee_mutation_chance)
-        bee.search_radius = mutate_int_with_max(bee.search_radius, search_radius_bits, bee_mutation_chance, max_search_radius)
-        bee.search_strategy = mutate_int_with_max(bee.search_strategy, 2, bee_mutation_chance, 2)
-        bee.honeycomb_start = bool(mutate_int(int(bee.honeycomb_start), 1, bee_mutation_chance))
+        original_genes_str = str(bee.genes())
+        genes = bee.genes()
+        mutate_bin_list(genes, bee_mutation_chance)
+        bee.parse_genes(genes)
+        bee.adjust_gene_values()
+        bee.is_mutant = (original_genes_str != str(bee.genes()))
 
 
 def add_missing_bees(bees):
@@ -72,8 +60,7 @@ def add_missing_bees(bees):
         bees.append(get_random_bee())
 
 
-def fake_flower_search(bees):
-    flowers = generate_initial_flowers()
+def fake_flower_search(bees, flowers):
     for _ in range(len(bees)):
         bee = random.choice(bees)
         flower = random.choice(flowers)

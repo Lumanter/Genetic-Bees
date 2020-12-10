@@ -1,18 +1,13 @@
 import random
 from flower import Flower
 from binary_utils import *
-
-flower_population = 50
-flower_mutation_chance = 0.2
-flower_max_coordinate = 127
-flower_coordinate_bits = 7
+from genetic_consts import *
 
 
 def get_random_flower():
-    color = [random.randint(0, 1) for _ in range(3)]
-    x = random.randint(0, flower_max_coordinate)
-    y = random.randint(0, flower_max_coordinate)
-    return Flower(color, x, y)
+    flower_genes_len = 3 + 2*flower_pos_bits
+    random_genes = [random.randint(0, 1) for _ in range(flower_genes_len)]
+    return Flower(random_genes)
 
 
 def generate_initial_flowers():
@@ -35,9 +30,9 @@ def crossover_flowers(flowers):
 
 def mutate_flowers(flowers):
     for flower in flowers:
-        mutate_bin_list(flower.color, flower_mutation_chance)
-        flower.x = mutate_int(flower.x, flower_coordinate_bits, flower_mutation_chance)
-        flower.y = mutate_int(flower.y, flower_coordinate_bits, flower_mutation_chance)
+        genes = flower.genes()
+        mutate_bin_list(genes, flower_mutation_chance)
+        flower.parse_genes(genes)
 
 
 def add_missing_flowers(flowers):
