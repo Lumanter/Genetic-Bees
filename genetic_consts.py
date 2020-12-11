@@ -1,5 +1,5 @@
 
-flower_population = 30
+flower_population = 100
 flower_mutation_chance = 0.2
 flower_max_pos = 127
 flower_pos_bits = 7

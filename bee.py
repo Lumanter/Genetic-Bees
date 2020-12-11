@@ -60,7 +60,7 @@ class Bee:
 
 
     def __str__(self):
-        return '<🐝 {}fit {} {}rgb {}° {}radius ({},{})🔍 {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], ''.join(str(val) for val in self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, self.traveled_distance, self.is_mutant)
+        return '<🐝 {}fit {} {} {}° {}radius ({},{})✈ {}✿ {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], rgb_name(self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, len(self.pollinated_flowers), self.traveled_distance, self.is_mutant)
 
 
     def __repr__(self):
@@ -69,3 +69,19 @@ class Bee:
 
 str_dirs = ['N', 'E', 'S', 'W', 'NE', 'SE', 'SW', 'NW']
 str_search_strategies = ['depth', 'breadth', 'random']
+
+
+def rgb_name(rgb_color):
+    str_color = ''.join(str(i) for i in rgb_color)
+    color_names = {
+        '000': "black",
+        '111': "white",
+        '100': "red",
+        '010': "green",
+        '001': "blue",
+        '110': "yellow",
+        '011': "cyan",
+        '101': "magenta"
+    }
+    return color_names.get(str_color, '-')
+
