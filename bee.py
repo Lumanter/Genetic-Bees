@@ -59,6 +59,13 @@ class Bee:
         return bin_list(self.fav_dir, 3) + self.fav_color + bin_list(self.deviation_angle, deviation_angle_bits) + bin_list(self.search_radius, search_radius_bits) + bin_list(self.search_strategy, 2) + [self.honeycomb_start]
 
 
+    def get_fav_dir(self):
+        return dirr(self.fav_dir)
+        
+
+    def get_honeycomb_start(self):
+        return starting_point(self.fav_dir,self.honeycomb_start)
+
     def __str__(self):
         return '<🐝 {}fit {} {} {}° {}radius ({},{})✈ {}✿ {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], rgb_name(self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, len(self.pollinated_flowers), self.traveled_distance, self.is_mutant)
 
@@ -84,4 +91,40 @@ def rgb_name(rgb_color):
         '101': "magenta"
     }
     return color_names.get(str_color, '-')
+def dirr(fav_dir):
+    if fav_dir == 0:
+        return 270 
+    if fav_dir == 1:
+        return 0 
+    if fav_dir == 2:
+        return 90 
+    if fav_dir == 3:
+        return 180 
+    if fav_dir == 4:
+        return 315 
+    if fav_dir == 5:
+        return 45 
+    if fav_dir == 6:
+        return 135 
+    if fav_dir == 7:
+        return 225 
+def starting_point(fav_dir,honeycomb_start):
+    if honeycomb_start:
+        return (64,64)
+    elif fav_dir == 0:
+        return (0,64) 
+    elif fav_dir == 1:
+        return (64,128) 
+    elif fav_dir == 2:
+        return (128,64) 
+    elif fav_dir == 3:
+        return (64,0) 
+    elif fav_dir == 4:
+        return (128,128) 
+    elif fav_dir == 5:
+        return (64,64) 
+    elif fav_dir == 6:
+        return (128,0) 
+    elif fav_dir == 7:
+        return (0,0) 
 

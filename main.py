@@ -1,5 +1,6 @@
 from bee_genetic import *
 from flower_genetic import *
+from search import *
 from bee import *
 from genetic_consts import *
 import pygame
@@ -13,10 +14,57 @@ bee_generations = []
 bees = generate_initial_bees()
 flowers = generate_initial_flowers()
 generations = 100
+print(bees)
+print(flowers)
+def search_bees(bees, flowers, honeycomb_point = Point(64,64)):
+    b = []
+    for bee in bees:
+        #print("direccion: ",str(bee.get_fav_dir()))
+        #print("desviacion: ",bee.deviation_angle)
+        #print("distancia: ",bee.search_radius)
+        #print("star point: ",bee.get_honeycomb_start())
+        point= bee.get_honeycomb_start()
+        point= Point(point[0],point[1])
+
+        flowers_in_area = get_flowers_in_the_area(get_bee_path_area(bee.get_fav_dir(),bee.deviation_angle,honeycomb_point,bee.search_radius),flowers)
+        
+        if flowers_in_area:
+            set_flower_point_distance(flowers_in_area,point)
+            
+            tree=Tree(visiting_a_node_chace)
+            if flowers_in_area:
+                for i in range(len(flowers_in_area)):
+                    tree.insert(tree.root,flowers_in_area[i])
+
+            if bee.search_strategy == 0:
+                bee.traveled_distance = bee.traveled_distance + point.get_distance_to(honeycomb_point)
+                tree.depth_first_search(tree.root,bee,point)
+
+            elif bee.search_strategy == 1:
+                visited=[]
+                queue=[]
+                bee.traveled_distance = bee.traveled_distance + point.get_distance_to(honeycomb_point)
+                tree.bfs(visited,tree.root,queue,bee,point)
+        
+            else:
+                bee.traveled_distance = bee.traveled_distance + point.get_distance_to(honeycomb_point)
+                previous_position=point
+                for i in range(random_bee_movements):
+                    index=random.randint(0, len(flowers_in_area) - 1)
+                    if flowers_in_area[index] == bee.fav_color or random.uniform(0.0, 1.0) <= visiting_a_node_chace:
+                        bee.pollinate(flowers_in_area[index])
+                        bee.traveled_distance=bee.traveled_distance + previous_position.get_distance_to(Point(flowers_in_area[index].x,flowers_in_area[index].y))
+                        previous_position = Point(flowers_in_area[index].x,flowers_in_area[index].y)
+        b.append(bee)
+    return b
+
 for _ in range(generations):
+
+
     flower_generations.append(copy.copy(flowers))
 
-    fake_flower_search(bees, flowers)
+    #fake_flower_search(bees, flowers)
+    bees=search_bees(bees, flowers)
 
     bees = fitness_bees(bees)
     bee_generations.append(copy.copy(bees))
@@ -33,7 +81,7 @@ for _ in range(generations):
     add_missing_bees(bees)
     add_missing_flowers(flowers)
 
-
+print(flowers)
 grid_cells = 128
 grid_cell_size = 7
 grid_x_offset = 480

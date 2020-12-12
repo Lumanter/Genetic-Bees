@@ -27,7 +27,7 @@ class Node:
 
 
 class Tree:
-    def __init__(self, nodes = 1, probability_of_visiting_a_node = (60/100)):
+    def __init__(self, probability_of_visiting_a_node, nodes = 1 ):
         self.root = None
         self.nodes = nodes
         self.probability_of_visiting_a_node = probability_of_visiting_a_node
@@ -88,9 +88,9 @@ class Tree:
 
     def depth_first_search(self,root,bee,previous_position):
         if (root == None):
-            return
-
+            return 
         if bee.fav_color == root.flower.color or random.uniform(0.0, 1.0) <= self.probability_of_visiting_a_node:
+            
             bee.pollinate(root.flower)
             bee.traveled_distance=bee.traveled_distance + previous_position.get_distance_to(Point(root.flower.x,root.flower.y))
 
@@ -102,29 +102,28 @@ class Tree:
     def bfs(self,visited, root, queue,bee,previous_position):
         visited.append(root)
         queue.append(root)
-        p=Point(root.flower.x,root.flower.y)
         while queue:
             node = queue.pop(0) 
             if node != None:
                 if node.flower.color == bee.fav_color or random.uniform(0.0, 1.0) <= self.probability_of_visiting_a_node:
-                    print(bee.__str__(),node.flower.__str__())
                     bee.pollinate(node.flower)
-
-                    print("distance" ,p.get_distance_to(Point(node.flower.x,node.flower.y)))
                     bee.traveled_distance=bee.traveled_distance + previous_position.get_distance_to(Point(node.flower.x,node.flower.y))
                     previous_position = Point(node.flower.x,node.flower.y)
 
                 if node.left_node not in visited:
                     visited.append(node.left_node)
                     queue.append(node.left_node)
+
                 if node.center_node not in visited:
                     visited.append(node.center_node)
                     queue.append(node.center_node)
+
                 if node.right_node not in visited:
                     visited.append(node.right_node)
                     queue.append(node.right_node)
-            
-
+        return
+        
+    
     def printPreorder(self,root):
         """just for fun"""
         if (root == None):
