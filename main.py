@@ -13,7 +13,7 @@ bee_generations = []
 
 bees = generate_initial_bees()
 flowers = generate_initial_flowers()
-generations = 100
+generations = 120
 print(bees)
 print(flowers)
 def search_bees(bees, flowers, honeycomb_point = Point(64,64)):
@@ -110,7 +110,7 @@ for flower_gen in flower_generations: # convert flowers to circles to display
 win = pygame.display.set_mode((1400, 950))
 pygame.display.set_caption('Genetic Bees')
 clock = pygame.time.Clock() # clock used to refresh the display
-gen_number = flower_population - 1
+gen_number = generations - 1
 bee_number = 0
 font_header = pygame.font.Font('segoe.ttf', 30)
 font_flower = pygame.font.Font('segoe.ttf', 10)
@@ -177,7 +177,7 @@ while run:
         gen_number = 0 if (gen_number < 0) else gen_number
     if key_pressed[pygame.K_RIGHT]:
         gen_number += 1
-        gen_number = (flower_population-1) if (gen_number == flower_population) else gen_number
+        gen_number = (generations-1) if (gen_number == generations) else gen_number
 
     pygame.display.update()
     clock.tick(60)
