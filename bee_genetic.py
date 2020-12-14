@@ -1,9 +1,10 @@
 import random
+import copy
 from bee import Bee
 from binary_utils import *
-from flower_genetic import generate_initial_flowers
 from genetic_consts import *
-
+from flower_genetic import *
+from search import search_bees
 
 def get_random_bee():
     bee_genes_len = 9 + deviation_angle_bits + search_radius_bits
@@ -46,12 +47,12 @@ def crossover_bees(bees):
 
 def mutate_bees(bees):
     for bee in bees:
-        original_genes_str = str(bee.genes())
+        original_genes = str(bee.genes())
         genes = bee.genes()
         mutate_bin_list(genes, bee_mutation_chance)
         bee.parse_genes(genes)
         bee.adjust_gene_values()
-        bee.is_mutant = (original_genes_str != str(bee.genes()))
+        bee.is_mutant = (original_genes != str(bee.genes()))
 
 
 def add_missing_bees(bees):
@@ -66,3 +67,31 @@ def fake_flower_search(bees, flowers):
         flower = random.choice(flowers)
         bee.pollinate(flower)
         bee.traveled_distance += random.randint(1, 50)
+
+
+def run_genetic_generations():
+    flower_generations = []
+    bee_generations = []
+    bees = generate_initial_bees()
+    flowers = generate_initial_flowers()
+    for i in range(generations):
+        print(i)
+        flower_generations.append(copy.copy(flowers))
+
+        bees = search_bees(bees, flowers)
+
+        bees = fitness_bees(bees)
+        bee_generations.append(copy.copy(bees))
+
+        select_bees(bees)
+        select_flowers(flowers)
+
+        bees = crossover_bees(bees)
+        flowers = crossover_flowers(flowers)
+
+        mutate_bees(bees)
+        mutate_flowers(flowers)
+
+        add_missing_bees(bees)
+        add_missing_flowers(flowers)
+    return flower_generations, bee_generations

@@ -1,11 +1,14 @@
 
-flower_population = 100
+
+generations = 300
+
+flower_population = 200
 flower_mutation_chance = 0.2
 flower_max_pos = 127
 flower_pos_bits = 7
 
-bee_population = 10
-bee_mutation_chance = 0.2
+bee_population = 25
+bee_mutation_chance = 0.3
 max_deviation_angle = 31
 deviation_angle_bits = len(list(bin(max_deviation_angle)[2:]))
 max_search_radius = 90

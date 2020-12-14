@@ -4,7 +4,7 @@ from genetic_consts import *
 
 
 class Bee:
-    def __init__(self, genes):
+    def __init__(self, genes, parents=None):
         self.fav_dir = 0
         self.fav_color = 0
         self.deviation_angle = 0
@@ -16,6 +16,8 @@ class Bee:
         self.traveled_distance = 0
         self.is_mutant = False
         self.fitness = -1
+        self.non_mutated_genes = ''.join(str(gene) for gene in self.genes())
+        self.parents = parents
 
 
     def pollinate(self, flower):
@@ -31,8 +33,9 @@ class Bee:
         first_child_genes = self_genes[:cut_index] + other_genes[cut_index:]
         second_child_genes = other_genes[:cut_index] + self_genes[cut_index:]
 
-        first_child = Bee(first_child_genes)
-        second_child = Bee(second_child_genes)
+        parents = (self, bee)
+        first_child = Bee(first_child_genes, parents)
+        second_child = Bee(second_child_genes, parents)
 
         first_child.adjust_gene_values()
         second_child.adjust_gene_values()
@@ -56,7 +59,7 @@ class Bee:
 
 
     def genes(self):
-        return bin_list(self.fav_dir, 3) + self.fav_color + bin_list(self.deviation_angle, deviation_angle_bits) + bin_list(self.search_radius, search_radius_bits) + bin_list(self.search_strategy, 2) + [self.honeycomb_start]
+        return bin_list(self.fav_dir, 3) + self.fav_color + bin_list(self.deviation_angle, deviation_angle_bits) + bin_list(self.search_radius, search_radius_bits) + bin_list(self.search_strategy, 2) + [int(self.honeycomb_start)]
 
 
     def get_fav_dir(self):
@@ -67,7 +70,7 @@ class Bee:
         return starting_point(self.fav_dir,self.honeycomb_start)
 
     def __str__(self):
-        return '<🐝 {}fit {} {} {}° {}radius ({},{})✈ {}✿ {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], rgb_name(self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, len(self.pollinated_flowers), self.traveled_distance, self.is_mutant)
+        return '<🐝 {}fit {} {} {}° {}radius ({},{})✈ {}✿ {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], rgb_name(self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, len(self.pollinated_flowers), int(self.traveled_distance), self.is_mutant)
 
 
     def __repr__(self):
@@ -91,6 +94,8 @@ def rgb_name(rgb_color):
         '101': "magenta"
     }
     return color_names.get(str_color, '-')
+
+
 def dirr(fav_dir):
     if fav_dir == 0:
         return 270 
@@ -107,7 +112,9 @@ def dirr(fav_dir):
     if fav_dir == 6:
         return 135 
     if fav_dir == 7:
-        return 225 
+        return 225
+
+
 def starting_point(fav_dir,honeycomb_start):
     if honeycomb_start:
         return (64,64)
