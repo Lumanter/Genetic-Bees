@@ -20,22 +20,26 @@ parent_bee = selected_bee
 def redraw_window():
     win.fill((180, 180, 180))
 
+    gen_number_txt = font_header.render('← generation #{} →'.format(gen_number + 1), True, (80, 80, 80))
+    win.blit(gen_number_txt, (grid_x_offset + 400, grid_y_offset - 43))
+
+    average_fitness = int(sum([bee.fitness for bee in bee_generations[gen_number]])/len(bee_generations[0]))
+    average_fitness_txt = font_header.render('average fitness: {}'.format(average_fitness), True, (80, 80, 80))
+    win.blit(average_fitness_txt, (140, 0))
+
     bee_number_txt = font_header.render('↑ bee #{} ↓'.format(bee_number + 1), True, (250, 250, 250))
-    win.blit(bee_number_txt, (190, 20))
+    win.blit(bee_number_txt, (190, 60))
 
     parent_bee_txt = font_header.render('parent bee', True, (250, 250, 250))
-    win.blit(parent_bee_txt, (170, 370))
+    win.blit(parent_bee_txt, (170, 410))
 
     parent_bee_options_txt = [font_body.render('left parent    - key Q', True, (250, 250, 250)), font_body.render('right parent - key E', True, (250, 250, 250)), font_body.render('reset parent - key R', True, (250, 250, 250))]
     for i, option in enumerate(parent_bee_options_txt):
-        win.blit(option, (30, 700+30*i))
+        win.blit(option, (30, 740+30*i))
 
-    draw_bee_stats(win, selected_bee, 30, 70)
+    draw_bee_stats(win, selected_bee, 30, 110)
     if parent_bee != selected_bee:
-        draw_bee_stats(win, parent_bee, 30, 420)
-
-    gen_number_txt = font_header.render('← generation #{} →'.format(gen_number+1), True, (250, 250, 250))
-    win.blit(gen_number_txt, (grid_x_offset + 400, grid_y_offset - 43))
+        draw_bee_stats(win, parent_bee, 30, 460)
 
     for cell_rect in grid: # draw flower grid
         pygame.draw.rect(win, (170, 170, 170), cell_rect, 1)
@@ -53,10 +57,15 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             run = False
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_q and parent_bee.parents: # events to change bee parent
-            parent_bee = parent_bee.parents[0]
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_e and parent_bee.parents:
-            parent_bee = parent_bee.parents[1]
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_q and parent_bee.parents: # events to change bee parent
+                parent_bee = parent_bee.parents[0]
+            if event.key == pygame.K_e and parent_bee.parents:
+                parent_bee = parent_bee.parents[1]
+            if event.key == pygame.K_w:
+                gen_number = generations - 1
+            if event.key == pygame.K_s:
+                gen_number = 0
 
     key_pressed = pygame.key.get_pressed() # arrow events to change generation and bee
     if key_pressed[pygame.K_UP]:
@@ -73,7 +82,7 @@ while run:
         gen_number += 1
         gen_number = (generations-1) if (gen_number == generations) else gen_number
 
-    if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_UP] or key_pressed[pygame.K_LEFT] or key_pressed[pygame.K_RIGHT] or key_pressed[pygame.K_r]:
+    if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_UP] or key_pressed[pygame.K_LEFT] or key_pressed[pygame.K_RIGHT] or key_pressed[pygame.K_r] or key_pressed[pygame.K_w] or key_pressed[pygame.K_s]:
         selected_bee = bee_generations[gen_number][bee_number]
         parent_bee = selected_bee
 
