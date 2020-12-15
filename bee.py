@@ -67,7 +67,7 @@ class Bee:
         
 
     def get_honeycomb_start(self):
-        return starting_point(self.fav_dir,self.honeycomb_start)
+        return self.honeycomb_start
 
     def __str__(self):
         return '<🐝 {}fit {} {} {}° {}radius ({},{})✈ {}✿ {}⚐ {}☢>'.format(self.fitness, str_dirs[self.fav_dir], rgb_name(self.fav_color), self.deviation_angle, self.search_radius, str_search_strategies[self.search_strategy], self.honeycomb_start, len(self.pollinated_flowers), int(self.traveled_distance), self.is_mutant)
@@ -114,24 +114,4 @@ def dirr(fav_dir):
     if fav_dir == 7:
         return 225
 
-
-def starting_point(fav_dir,honeycomb_start):
-    if honeycomb_start:
-        return (64,64)
-    elif fav_dir == 0:
-        return (0,64) 
-    elif fav_dir == 1:
-        return (64,128) 
-    elif fav_dir == 2:
-        return (128,64) 
-    elif fav_dir == 3:
-        return (64,0) 
-    elif fav_dir == 4:
-        return (128,128) 
-    elif fav_dir == 5:
-        return (64,64) 
-    elif fav_dir == 6:
-        return (128,0) 
-    elif fav_dir == 7:
-        return (0,0) 
 

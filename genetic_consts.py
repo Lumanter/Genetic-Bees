@@ -17,4 +17,3 @@ fitness_flowers_factor = 100
 top_bees_percent = 0.4
 
 visiting_a_node_chace = (10/100)
-random_bee_movements = 5

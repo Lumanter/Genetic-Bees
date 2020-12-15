@@ -77,8 +77,8 @@ def run_genetic_generations():
     for i in range(generations):
         print('generating gen ', i+1)
         flower_generations.append(copy.copy(flowers))
-
-        bees = search_bees(bees, flowers)
+        
+        search_bees(bees, flowers)
 
         bees = fitness_bees(bees)
         bee_generations.append(copy.copy(bees))

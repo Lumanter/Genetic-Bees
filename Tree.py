@@ -93,8 +93,9 @@ class Tree:
             
             bee.pollinate(root.flower)
             bee.traveled_distance=bee.traveled_distance + previous_position.get_distance_to(Point(root.flower.x,root.flower.y))
+            
 
-        self.depth_first_search(root.left_node,bee,Point(root.flower.x,root.flower.y));  
+        self.depth_first_search(root.left_node,bee,Point(root.flower.x,root.flower.y)); 
         self.depth_first_search(root.center_node,bee,Point(root.flower.x,root.flower.y)); 
         self.depth_first_search(root.right_node,bee,Point(root.flower.x,root.flower.y)); 
 
@@ -102,6 +103,7 @@ class Tree:
     def bfs(self,visited, root, queue,bee,previous_position):
         visited.append(root)
         queue.append(root)
+        last=None
         while queue:
             node = queue.pop(0) 
             if node != None:
@@ -109,6 +111,7 @@ class Tree:
                     bee.pollinate(node.flower)
                     bee.traveled_distance=bee.traveled_distance + previous_position.get_distance_to(Point(node.flower.x,node.flower.y))
                     previous_position = Point(node.flower.x,node.flower.y)
+                    last=node.flower
 
                 if node.left_node not in visited:
                     visited.append(node.left_node)
@@ -121,7 +124,7 @@ class Tree:
                 if node.right_node not in visited:
                     visited.append(node.right_node)
                     queue.append(node.right_node)
-        return
+        return last
         
     
     def printPreorder(self,root):
