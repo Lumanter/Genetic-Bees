@@ -75,7 +75,7 @@ def run_genetic_generations():
     bees = generate_initial_bees()
     flowers = generate_initial_flowers()
     for i in range(generations):
-        print(i)
+        print('generating gen ', i+1)
         flower_generations.append(copy.copy(flowers))
 
         bees = search_bees(bees, flowers)

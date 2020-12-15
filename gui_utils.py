@@ -27,8 +27,8 @@ def draw_bee_stats(win, bee, x, y):
 def convert_flower_generations_for_display(flower_generations):
     for flower_gen in flower_generations:  # convert flowers to display
         for i, flower in enumerate(flower_gen):
-            x = grid_x_offset + grid_cell_size * flower.x + random.randint(0, 3)
-            y = grid_y_offset + grid_cell_size * flower.y - grid_cell_size + random.randint(0, 3)
+            x = grid_x_offset + grid_cell_size * flower.x + random.randint(0, 10)
+            y = grid_y_offset + grid_cell_size * flower.y - grid_cell_size + random.randint(0, 10)
             pos = (x, y)
             color = [255 * bit for bit in flower.color]
             flower_txt = font_flower.render('✿', True, color)

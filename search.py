@@ -90,7 +90,7 @@ def search_bees(bees, flowers, honeycomb_point=Point(64, 64)):
             else:
                 bee.traveled_distance = bee.traveled_distance + point.get_distance_to(honeycomb_point)
                 previous_position = point
-                for i in range(random_bee_movements):
+                for i in range(len(flowers_in_area)):
                     index = random.randint(0, len(flowers_in_area) - 1)
                     if flowers_in_area[index] == bee.fav_color or random.uniform(0.0, 1.0) <= visiting_a_node_chace:
                         bee.pollinate(flowers_in_area[index])

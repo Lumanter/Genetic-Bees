@@ -19,23 +19,25 @@ parent_bee = selected_bee
 
 def redraw_window():
     win.fill((180, 180, 180))
+    dark_grey = (80, 80, 80)
+    white = (250, 250, 250)
 
-    gen_number_txt = font_header.render('← generation #{} →'.format(gen_number + 1), True, (80, 80, 80))
+    gen_number_txt = font_header.render('← generation #{} →'.format(gen_number + 1), True, dark_grey)
     win.blit(gen_number_txt, (grid_x_offset + 400, grid_y_offset - 43))
 
     average_fitness = int(sum([bee.fitness for bee in bee_generations[gen_number]])/len(bee_generations[0]))
-    average_fitness_txt = font_header.render('average fitness: {}'.format(average_fitness), True, (80, 80, 80))
+    average_fitness_txt = font_header.render('average fitness: {}'.format(average_fitness), True, dark_grey)
     win.blit(average_fitness_txt, (140, 0))
 
-    bee_number_txt = font_header.render('↑ bee #{} ↓'.format(bee_number + 1), True, (250, 250, 250))
+    bee_number_txt = font_header.render('↑ bee #{} ↓'.format(bee_number + 1), True, white)
     win.blit(bee_number_txt, (190, 60))
 
-    parent_bee_txt = font_header.render('parent bee', True, (250, 250, 250))
+    parent_bee_txt = font_header.render('parent bee', True, white)
     win.blit(parent_bee_txt, (170, 410))
 
-    parent_bee_options_txt = [font_body.render('left parent    - key Q', True, (250, 250, 250)), font_body.render('right parent - key E', True, (250, 250, 250)), font_body.render('reset parent - key R', True, (250, 250, 250))]
-    for i, option in enumerate(parent_bee_options_txt):
-        win.blit(option, (30, 740+30*i))
+    parent_bee_options = ['left parent    - key Q', 'right parent - key E','reset parent - key R', 'first gen - key S', 'last gen - key W']
+    for i, option in enumerate(parent_bee_options):
+        win.blit(font_body.render(option, True, white), (30, 740+30*i))
 
     draw_bee_stats(win, selected_bee, 30, 110)
     if parent_bee != selected_bee:
