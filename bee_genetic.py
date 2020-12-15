@@ -1,4 +1,5 @@
 import random
+import numpy.random
 import copy
 from bee import Bee
 from binary_utils import *
@@ -21,27 +22,27 @@ def generate_initial_bees():
 def fitness_bees(bees):
     for bee in bees:
         bee.fitness = int(len(bee.pollinated_flowers) * fitness_flowers_factor - bee.traveled_distance)
-    bees = sorted(bees, key=lambda bee: bee.fitness, reverse=True)
+        bee.fitness = max(0, bee.fitness)
     return bees
 
 
-def select_bees(bees):
-    cut_index = int(top_bees_percent * len(bees))
-    for i in range(len(bees)-1, -1, -1):
-        if i >= cut_index:
-            bees.pop(i)
+def select_bee(bees):
+    fitness_sum = sum([bee.fitness for bee in bees])
+    selection_probabilities = [(bee.fitness/fitness_sum) for bee in bees]
+    selected_bee = bees[numpy.random.choice(len(bees), p=selection_probabilities)]
+    return selected_bee
 
 
 def crossover_bees(bees):
     offspring = []
-    for i in range(0, len(bees) - 1, 2):
-        first_parent = bees[i]
-        if (i + 1 == len(bees)): # odd parent
-            second_parent = bees[random.randin(0, len(bees))]
-        else:
-            second_parent = bees[i + 1]
+    for i in range(int(len(bees)/2)):
+        first_parent = select_bee(bees)
+        second_parent = select_bee(bees)
+
         first_child, second_child = first_parent.crossover(second_parent)
-        offspring.extend([first_child, second_child])
+        offspring.append(first_child)
+        if len(offspring) < len(bees):
+            offspring.append(second_child)
     return offspring
 
 
@@ -53,20 +54,6 @@ def mutate_bees(bees):
         bee.parse_genes(genes)
         bee.adjust_gene_values()
         bee.is_mutant = (original_genes != str(bee.genes()))
-
-
-def add_missing_bees(bees):
-    missing_bees = bee_population - len(bees)
-    for _ in range(missing_bees):
-        bees.append(get_random_bee())
-
-
-def fake_flower_search(bees, flowers):
-    for _ in range(len(bees)):
-        bee = random.choice(bees)
-        flower = random.choice(flowers)
-        bee.pollinate(flower)
-        bee.traveled_distance += random.randint(1, 50)
 
 
 def run_genetic_generations():
@@ -83,7 +70,6 @@ def run_genetic_generations():
         bees = fitness_bees(bees)
         bee_generations.append(copy.copy(bees))
 
-        select_bees(bees)
         select_flowers(flowers)
 
         bees = crossover_bees(bees)
@@ -92,6 +78,5 @@ def run_genetic_generations():
         mutate_bees(bees)
         mutate_flowers(flowers)
 
-        add_missing_bees(bees)
         add_missing_flowers(flowers)
     return flower_generations, bee_generations

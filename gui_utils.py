@@ -19,7 +19,6 @@ def draw_bee_stats(win, bee, x, y):
     stats_txt.append(font_body.render('pollinated flowers:     {}'.format(len(bee.pollinated_flowers)), True, stats_text_color))
     stats_txt.append(font_body.render('search distance:         {}'.format(int(bee.traveled_distance)), True, stats_text_color))
     stats_txt.append(font_body.render('is mutant:                   {}'.format(bee.is_mutant), True, stats_text_color))
-    stats_txt.append(font_body.render('has parents:               {}'.format(bee.parents is not None), True, stats_text_color))
     for i, txt in enumerate(stats_txt):
         win.blit(txt, (x, y+line_spacing*i))
 
@@ -31,5 +30,9 @@ def convert_flower_generations_for_display(flower_generations):
             y = grid_y_offset + grid_cell_size * flower.y - grid_cell_size + random.randint(0, 10)
             pos = (x, y)
             color = [255 * bit for bit in flower.color]
-            flower_txt = font_flower.render('✿', True, color)
+            if flower.pollens:
+                flower_txt = font_flower.render('✿', True, color)
+            else:
+                #flower_txt = font_flower.render('✿', True, color)
+                flower_txt = font_flower.render('x', True, (120, 120, 120))
             flower_gen[i] = (pos, flower_txt)

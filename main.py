@@ -2,16 +2,23 @@ from bee_genetic import *
 from search import *
 from gui_consts import *
 from gui_utils import *
+import os
 import pygame
 
 
 flower_generations, bee_generations = run_genetic_generations()
 convert_flower_generations_for_display(flower_generations)
 
+os.environ['SDL_VIDEO_CENTERED'] = '1' # center window
 win = pygame.display.set_mode((1400, 950))
 pygame.display.set_caption('Genetic Bees')
 gen_number = generations - 1
 bee_number = 0
+for i, bees in enumerate(bee_generations):
+    current_best_average_fitness = sum([bee.fitness for bee in bee_generations[gen_number]]) / len(bee_generations[0])
+    gen_average_fitness = sum([bee.fitness for bee in bee_generations[i]]) / len(bee_generations[0])
+    if (gen_average_fitness > current_best_average_fitness):
+        gen_number = i
 
 selected_bee = bee_generations[gen_number][bee_number]
 parent_bee = selected_bee

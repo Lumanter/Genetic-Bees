@@ -113,5 +113,3 @@ def dirr(fav_dir):
         return 135 
     if fav_dir == 7:
         return 225
-
-
