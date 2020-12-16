@@ -7,13 +7,14 @@ import pygame
 
 
 flower_generations, bee_generations = run_genetic_generations()
-convert_flower_generations_for_display(flower_generations)
+display_flowers = to_display_flowers(flower_generations)
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # center window
 win = pygame.display.set_mode((1400, 950))
 pygame.display.set_caption('Genetic Bees')
 gen_number = generations - 1
 bee_number = 0
+view_pollinated_flowers = False
 for i, bees in enumerate(bee_generations):
     current_best_average_fitness = sum([bee.fitness for bee in bee_generations[gen_number]]) / len(bee_generations[0])
     gen_average_fitness = sum([bee.fitness for bee in bee_generations[i]]) / len(bee_generations[0])
@@ -42,9 +43,9 @@ def redraw_window():
     parent_bee_txt = font_header.render('parent bee', True, white)
     win.blit(parent_bee_txt, (170, 410))
 
-    parent_bee_options = ['left parent    - key Q', 'right parent - key E','reset parent - key R', 'first gen - key S', 'last gen - key W']
+    parent_bee_options = ['left parent             - key Q', 'right parent          - key E','reset parent          - key R', 'first gen                - key S', 'last gen                - key W', 'show pollination - SPACE']
     for i, option in enumerate(parent_bee_options):
-        win.blit(font_body.render(option, True, white), (30, 740+30*i))
+        win.blit(font_body.render(option, True, (dark_grey)), (50, 740+30*i))
 
     draw_bee_stats(win, selected_bee, 30, 110)
     if parent_bee != selected_bee:
@@ -53,7 +54,7 @@ def redraw_window():
     for cell_rect in grid: # draw flower grid
         pygame.draw.rect(win, (170, 170, 170), cell_rect, 1)
 
-    for flower_circle in flower_generations[gen_number]: # draw flowers
+    for flower_circle in display_flowers[gen_number]: # draw flowers
         pos, flower_txt = flower_circle
         win.blit(flower_txt, pos)
     pygame.display.update()
@@ -75,6 +76,11 @@ while run:
                 gen_number = generations - 1
             if event.key == pygame.K_s:
                 gen_number = 0
+            if event.key == pygame.K_SPACE:
+                view_pollinated_flowers = not view_pollinated_flowers
+                display_flowers = to_display_flowers(flower_generations, view_pollinated_flowers)
+
+
 
     key_pressed = pygame.key.get_pressed() # arrow events to change generation and bee
     if key_pressed[pygame.K_UP]:

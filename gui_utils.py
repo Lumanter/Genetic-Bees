@@ -23,16 +23,19 @@ def draw_bee_stats(win, bee, x, y):
         win.blit(txt, (x, y+line_spacing*i))
 
 
-def convert_flower_generations_for_display(flower_generations):
+def to_display_flowers(flower_generations, pollinated_only=False):
+    display_flowers = []
     for flower_gen in flower_generations:  # convert flowers to display
-        for i, flower in enumerate(flower_gen):
-            x = grid_x_offset + grid_cell_size * flower.x + random.randint(0, 10)
-            y = grid_y_offset + grid_cell_size * flower.y - grid_cell_size + random.randint(0, 10)
+        display_gen = []
+        for flower in flower_gen:
+            x = grid_x_offset + grid_cell_size * flower.x + random.randint(0, 5) * random.choice([-1,1])
+            y = grid_y_offset + grid_cell_size * flower.y - grid_cell_size + random.randint(0, 5) * random.choice([-1,1])
             pos = (x, y)
             color = [255 * bit for bit in flower.color]
-            if flower.pollens:
+            if flower.pollens or not pollinated_only:
                 flower_txt = font_flower.render('✿', True, color)
             else:
-                #flower_txt = font_flower.render('✿', True, color)
-                flower_txt = font_flower.render('x', True, (120, 120, 120))
-            flower_gen[i] = (pos, flower_txt)
+                flower_txt = font_flower.render('x', True, (100, 100, 100))
+            display_gen.append((pos, flower_txt))
+        display_flowers.append(display_gen)
+    return display_flowers

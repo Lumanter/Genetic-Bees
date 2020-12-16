@@ -1,4 +1,5 @@
 import random
+import numpy.random
 from flower import Flower
 from binary_utils import *
 from genetic_consts import *
@@ -14,15 +15,26 @@ def generate_initial_flowers():
     return [get_random_flower() for _ in range(flower_population)]
 
 
-def select_flowers(flowers):
-    for i in range(len(flowers)-1, -1, -1):
-        if not flowers[i].pollens:
-            flowers.pop(i)
+def select_flower(flowers):
+    fitness_sum = sum([len(flower.pollens) for flower in flowers])
+    if fitness_sum == 0:
+        selected_flower = random.choice(flowers)
+    else:
+        selection_probabilities = [(len(flower.pollens) / fitness_sum) for flower in flowers]
+        selected_flower = flowers[numpy.random.choice(len(flowers), p=selection_probabilities)]
+    return selected_flower
 
 
 def crossover_flowers(flowers):
     offspring = []
     for flower in flowers:
+        if flower.pollens:
+            pollen = random.choice(flower.pollens)
+            offspring.append(flower.crossover(pollen))
+
+    missing_flowers = len(flowers) - len(offspring)
+    for _ in range(missing_flowers):
+        flower = select_flower(flowers)
         pollen = random.choice(flower.pollens)
         offspring.append(flower.crossover(pollen))
     return offspring

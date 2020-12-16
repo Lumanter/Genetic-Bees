@@ -23,6 +23,7 @@ def fitness_bees(bees):
     for bee in bees:
         bee.fitness = int(len(bee.pollinated_flowers) * fitness_flowers_factor - bee.traveled_distance)
         bee.fitness = max(0, bee.fitness)
+    bees = sorted(bees, key=lambda bee: bee.fitness, reverse=True)
     return bees
 
 
@@ -63,14 +64,12 @@ def run_genetic_generations():
     flowers = generate_initial_flowers()
     for i in range(generations):
         print('generating gen ', i+1)
-        flower_generations.append(copy.copy(flowers))
-        
+
         search_bees(bees, flowers)
+        flower_generations.append(copy.copy(flowers)) # flowers gen snapshot
 
         bees = fitness_bees(bees)
-        bee_generations.append(copy.copy(bees))
-
-        select_flowers(flowers)
+        bee_generations.append(copy.copy(bees)) # bee gen snapshot
 
         bees = crossover_bees(bees)
         flowers = crossover_flowers(flowers)
