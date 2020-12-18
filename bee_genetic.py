@@ -67,13 +67,13 @@ def run_genetic_generations():
     flowers = generate_initial_flowers()
     fitness_goal_reached = False
     for i in range(generations):
-        print('generating gen ', i+1)
-
         search_bees(bees, flowers)
         flower_generations.append(copy.copy(flowers)) # flowers gen snapshot
 
         bees = fitness_bees(bees)
         bee_generations.append(copy.copy(bees)) # bee gen snapshot
+
+        print('(gen {}) avg fit {}'.format(i+1, avg_fitness(bees)))
 
         if (avg_fitness(bees) >= goal_avg_gen_fitness):
             fitness_goal_reached = True

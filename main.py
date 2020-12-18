@@ -25,7 +25,7 @@ parent_bee = selected_bee
 
 
 def redraw_window():
-    win.fill((180, 180, 180))
+    win.fill((175, 175, 175))
     dark_grey = (80, 80, 80)
     white = (250, 250, 250)
 
@@ -53,7 +53,7 @@ def redraw_window():
         draw_bee_stats(win, parent_bee, 30, 460)
 
     for cell_rect in grid: # draw flower grid
-        pygame.draw.rect(win, (170, 170, 170), cell_rect, 1)
+        pygame.draw.rect(win, (160, 160, 160), cell_rect, 1)
 
     for flower_circle in display_flowers[gen_number]: # draw flowers
         pos, flower_txt = flower_circle
@@ -74,7 +74,7 @@ while run:
             if event.key == pygame.K_e and parent_bee.parents:
                 parent_bee = parent_bee.parents[1]
             if event.key == pygame.K_w:
-                gen_number = generations - 1
+                gen_number = len(bee_generations)-1
             if event.key == pygame.K_s:
                 gen_number = 0
             if event.key == pygame.K_SPACE:
@@ -96,7 +96,7 @@ while run:
         gen_number = 0 if (gen_number < 0) else gen_number
     if key_pressed[pygame.K_RIGHT]:
         gen_number += 1
-        gen_number = (generations-1) if (gen_number == generations) else gen_number
+        gen_number = (len(bee_generations)-1) if (gen_number == len(bee_generations)) else gen_number
 
     if key_pressed[pygame.K_DOWN] or key_pressed[pygame.K_UP] or key_pressed[pygame.K_LEFT] or key_pressed[pygame.K_RIGHT] or key_pressed[pygame.K_r] or key_pressed[pygame.K_w] or key_pressed[pygame.K_s]:
         selected_bee = bee_generations[gen_number][bee_number]
