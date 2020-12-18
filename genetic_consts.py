@@ -1,7 +1,7 @@
 
 goal_avg_gen_fitness = 5500
 
-generations = 2
+generations = 100
 flower_population = 200
 bee_population = 20
 
