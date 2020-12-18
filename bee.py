@@ -77,7 +77,7 @@ class Bee:
         return self.__str__()
 
 
-str_dirs = ['S', 'W', 'N', 'E', 'SW', 'NW', 'NE', 'SE']
+str_dirs = ['N', 'W', 'S', 'E', 'NW', 'SW', 'SE', 'NE']
 str_search_strategies = ['depth', 'breadth', 'random']
 
 

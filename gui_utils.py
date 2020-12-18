@@ -5,7 +5,7 @@ import pygame
 
 
 def draw_bee_stats(win, bee, x, y):
-    line_spacing = 20
+    line_spacing = 23
     stats_text_color = (250, 250, 250)
     stats_txt = [(font_body.render('original genes:           ' + bee.non_mutated_genes, True, stats_text_color))]
     stats_txt.append(font_body.render('mutated genes:          ' + ''.join(str(gene) for gene in bee.genes()), True, stats_text_color))

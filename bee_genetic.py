@@ -56,12 +56,16 @@ def mutate_bees(bees):
         bee.adjust_gene_values()
         bee.is_mutant = (original_genes != str(bee.genes()))
 
+def avg_fitness(bees):
+    return int(sum([bee.fitness for bee in bees]) / len(bees))
+
 
 def run_genetic_generations():
     flower_generations = []
     bee_generations = []
     bees = generate_initial_bees()
     flowers = generate_initial_flowers()
+    fitness_goal_reached = False
     for i in range(generations):
         print('generating gen ', i+1)
 
@@ -71,11 +75,15 @@ def run_genetic_generations():
         bees = fitness_bees(bees)
         bee_generations.append(copy.copy(bees)) # bee gen snapshot
 
-        bees = crossover_bees(bees)
-        flowers = crossover_flowers(flowers)
+        if (avg_fitness(bees) >= goal_avg_gen_fitness):
+            fitness_goal_reached = True
+            break
+        else:
+            bees = crossover_bees(bees)
+            flowers = crossover_flowers(flowers)
 
-        mutate_bees(bees)
-        mutate_flowers(flowers)
+            mutate_bees(bees)
+            mutate_flowers(flowers)
 
-        add_missing_flowers(flowers)
-    return flower_generations, bee_generations
+            add_missing_flowers(flowers)
+    return flower_generations, bee_generations, fitness_goal_reached

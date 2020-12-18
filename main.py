@@ -6,19 +6,18 @@ import os
 import pygame
 
 
-flower_generations, bee_generations = run_genetic_generations()
+flower_generations, bee_generations, goal_fitness_reached = run_genetic_generations()
 display_flowers = to_display_flowers(flower_generations)
 
 os.environ['SDL_VIDEO_CENTERED'] = '1' # center window
 win = pygame.display.set_mode((1400, 950))
 pygame.display.set_caption('Genetic Bees')
-gen_number = generations - 1
+
+gen_number = len(bee_generations) - 1
 bee_number = 0
 view_pollinated_flowers = False
-for i, bees in enumerate(bee_generations):
-    current_best_average_fitness = sum([bee.fitness for bee in bee_generations[gen_number]]) / len(bee_generations[0])
-    gen_average_fitness = sum([bee.fitness for bee in bee_generations[i]]) / len(bee_generations[0])
-    if (gen_average_fitness > current_best_average_fitness):
+for i, bees in enumerate(bee_generations): # set gen_number to best fitness gen
+    if (avg_fitness(bee_generations[i]) > avg_fitness(bee_generations[gen_number])):
         gen_number = i
 
 selected_bee = bee_generations[gen_number][bee_number]
@@ -31,23 +30,25 @@ def redraw_window():
     white = (250, 250, 250)
 
     gen_number_txt = font_header.render('← generation #{} →'.format(gen_number + 1), True, dark_grey)
-    win.blit(gen_number_txt, (grid_x_offset + 400, grid_y_offset - 43))
+    win.blit(gen_number_txt, (grid_x_offset + 350, grid_y_offset - 43))
 
-    average_fitness = int(sum([bee.fitness for bee in bee_generations[gen_number]])/len(bee_generations[0]))
-    average_fitness_txt = font_header.render('average fitness: {}'.format(average_fitness), True, dark_grey)
-    win.blit(average_fitness_txt, (140, 0))
+    average_fitness_txt = font_header.render('average fitness: {}'.format(avg_fitness(bee_generations[gen_number])), True, dark_grey)
+    win.blit(average_fitness_txt, (120, 0))
+
+    goal_fitness_txt = font_body.render('goal {} reached: {}'.format(goal_avg_gen_fitness, goal_fitness_reached), True, dark_grey)
+    win.blit(goal_fitness_txt, (140, 40))
 
     bee_number_txt = font_header.render('↑ bee #{} ↓'.format(bee_number + 1), True, white)
-    win.blit(bee_number_txt, (190, 60))
+    win.blit(bee_number_txt, (190, 80))
 
     parent_bee_txt = font_header.render('parent bee', True, white)
-    win.blit(parent_bee_txt, (170, 410))
+    win.blit(parent_bee_txt, (170, 420))
 
     parent_bee_options = ['left parent             - key Q', 'right parent          - key E','reset parent          - key R', 'first gen                - key S', 'last gen                - key W', 'show pollination - SPACE']
     for i, option in enumerate(parent_bee_options):
-        win.blit(font_body.render(option, True, (dark_grey)), (50, 740+30*i))
+        win.blit(font_body.render(option, True, dark_grey), (50, 750+30*i))
 
-    draw_bee_stats(win, selected_bee, 30, 110)
+    draw_bee_stats(win, selected_bee, 30, 120)
     if parent_bee != selected_bee:
         draw_bee_stats(win, parent_bee, 30, 460)
 
